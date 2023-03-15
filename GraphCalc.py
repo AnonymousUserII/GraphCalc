@@ -21,7 +21,7 @@ from Scripts.GraphUtilities import generate_iterative_plots, generate_plot_point
 if __name__ == "__main__":
     _TITLE: str = "GraphCalc"
     
-    try:  # Load assets directory
+    try:  # Load files in assets directory
         _ICON: pygame.Surface = pygame.image.load(path.join("Assets", "graphcalc.png"))
         func_normal: pygame.Surface = pygame.image.load(path.join("Assets", "func.tiff"))
         func_hover: pygame.Surface = pygame.image.load(path.join("Assets", "func_hover.tiff"))
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         centre_move: pygame.Surface = pygame.image.load(path.join("Assets", "btn_centre.tiff"))
         clicksel: pygame.Surface = pygame.image.load(path.join("Assets", "btn_clicksel.tiff"))
     except FileNotFoundError:
-        logging.error("File must be run with the Assets folder in its directory")
+        print("This must be run with the Assets folder in its directory")
         exit(404)
 
 func_dict: dict = {}  # Create a dictionary for eval to identify functions
@@ -44,9 +44,8 @@ for function in ["sin", "cos", "tan", "sec", "csc", "cot", "asin", "acos", "atan
     func_dict[function] = locals().get(function)
 
 WIN_RES: tuple[int, int] = (450, 650)
-_WIN_OFFSET: int = 30  # Used for calculating initial window position
 
-TICK: int = 120  # Refresh rate
+TICK: int = 6evalf;lsdkfsdjfslkdfjlsdf0  # Refresh rate
 
 # Colors
 BG_COLOR: tuple = (240, 240, 240)

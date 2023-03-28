@@ -45,7 +45,7 @@ for function in ["sin", "cos", "tan", "sec", "csc", "cot", "asin", "acos", "atan
 
 WIN_RES: tuple[int, int] = (450, 650)
 
-TICK: int = 6evalf;lsdkfsdjfslkdfjlsdf0  # Refresh rate
+TICK: int = 60  # Refresh rate
 
 # Colors
 BG_COLOR: tuple = (240, 240, 240)

@@ -1,16 +1,13 @@
-import logging
 from os import path
 from sys import exit
 from multiprocessing import freeze_support, Process, Manager
 from threading import Thread
-from screeninfo import get_monitors
 from copy import deepcopy
+from time import time, localtime, asctime
 from contextlib import redirect_stdout
 with redirect_stdout(None):
     import pygame
     
-import json
-
 from Classes.SpriteButton import SpriteButton
 from Classes.CheckBox import CheckBox
 from Classes.InputBox import InputBox
@@ -45,7 +42,7 @@ for function in ["sin", "cos", "tan", "sec", "csc", "cot", "asin", "acos", "atan
 
 WIN_RES: tuple[int, int] = (450, 650)
 
-TICK: int = 60  # Refresh rate
+TICK: int = 120  # Refresh rate
 
 # Colors
 BG_COLOR: tuple = (240, 240, 240)
@@ -93,7 +90,7 @@ insert_label2: Text
 dce_texts: tuple = ("-10", "10", "-10", "10", True, False, False, False, "y = -x^3", "y = x(x + 1)(x - 2)", "", "")
 
 
-def iterative_points(equation: tuple[str, str], x_bounds, y_bounds, ranges, resolution, mang_dict, idx):
+def iterative_points(equation: tuple[str, str], x_bounds, y_bounds, ranges, resolution, mang_dict, idx) -> None:
     """
     Auxiliary function to allow iterative graphs to be generated in a process rather than a thread
     """
@@ -102,14 +99,28 @@ def iterative_points(equation: tuple[str, str], x_bounds, y_bounds, ranges, reso
     info_packs: tuple[tuple] = generate_iterative_plots(equation, x_bounds, y_bounds, ranges, resolution)
     graph_points = generate_plot_points(info_packs)
     mang_dict[idx] = graph_points
-    return
+    return None
+
+
+def graph_capture(app_window: pygame.Surface) -> None:
+    """
+    Takes a screenshot of the current state of graph
+    """
+    screenshot: pygame.Surface = app_window.subsurface(pygame.Rect(GRAPH_POS, GRAPH_RES))
+    
+    enabled_func_texts: list[str] = []
+    for func, enabler in zip(funcs, enablers):
+        enabled_func_texts.append(func.text.replace(' ', "") if enabler.on else "")
+    filename: str = ";".join(enabled_func_texts)
+    filename += "_on_" + asctime(localtime(time()))[4:].replace(' ', '_').replace(':', '.')
+    
+    pygame.image.save(screenshot, path.join("GraphCaptures", filename + ".png"))
+    return None
 
 
 # noinspection PyUnboundLocalVariable
 def graph_config_window() -> None:
     global GRAPH_RES, WIN_RES, GRAPH_POS, dce_texts
-    pygame.mixer.pre_init(44100, 16, 2, 4096)
-    pygame.init()
     
     clock: pygame.time.Clock = pygame.time.Clock()
     pygame.display.set_caption(_TITLE)
@@ -312,6 +323,7 @@ def graph_config_window() -> None:
     in_cool, out_cool, l_cool, r_cool, d_cool, u_cool = False, False, False, False, False, False  # For graph panning
     ren_cool: bool = False  # For render button shortcut
     tab_cool: bool = False  # For textbox switching
+    cap_cool: bool = False  # For saving graph as an image
     reset_cool: bool = False  # For resetting graph boundary
     setting_bound: bool = False  # Waiting for another click for click boundary selection
     first_corner: tuple | None = None  # Holds the window_to_graph of first click position for click boundary selection
@@ -542,6 +554,7 @@ def graph_config_window() -> None:
                         lower_bound.text = str(min(first_corner[1], s_corner[1]))
                         upper_bound.text = str(max(first_corner[1], s_corner[1]))
                         render_button.is_click = True
+                        pan_or_zoom = True
                         first_corner = None
                         mouse_cool = True
                     else:
@@ -616,6 +629,18 @@ def graph_config_window() -> None:
                 lower_bound.text, upper_bound.text = grapher.new_bounds(x_axis=False, transformation="inc")
             elif not keys_pressed[pygame.K_UP]:
                 u_cool = False
+            
+            if keys_pressed[pygame.K_F10] and not cap_cool:
+                cap_cool = True
+                for proc in proc_queue:
+                    if proc is not None:
+                        print("Can\'t capture while function is being rendered")
+                        break
+                else:
+                    graph_capture(window)
+            elif not keys_pressed[pygame.K_F10]:
+                cap_cool = False
+            
         did_poz |= pan_or_zoom
         render_button.text = "refresh" if did_poz else "enter"
         render_button.draw()
@@ -772,7 +797,9 @@ def graph_config_window() -> None:
 
 if __name__ == "__main__":
     freeze_support()  # Fixes problems with multiprocessing module
-    _res: tuple[int, int] = get_monitors()[0].width, get_monitors()[0].height  # Gets resolution of display
+    pygame.mixer.pre_init(44100, 16, 2, 4096)
+    pygame.init()
+    _res: tuple[int, int] = pygame.display.get_desktop_sizes()[0]  # Gets resolution of display
     
     graph_config_window()  # Open graph window
     exit(0)

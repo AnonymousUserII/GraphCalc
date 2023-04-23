@@ -7,5 +7,3 @@ Any unexpected, reproducible error reports are welcome.
 - PyGame
 - NumPy
 - sigfig
-- screeninfo
-

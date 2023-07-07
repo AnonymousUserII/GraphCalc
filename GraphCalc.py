@@ -125,7 +125,7 @@ def graph_config_window() -> None:
     clock: pygame.time.Clock = pygame.time.Clock()
     pygame.display.set_caption(_TITLE)
     pygame.display.set_icon(_ICON)
-    window: pygame.Surface = pygame.display.set_mode(WIN_RES, pygame.DOUBLEBUF)
+    window: pygame.Surface = pygame.display.set_mode(WIN_RES)
     
     def draw_config_elements() -> None:
         global grapher, res_box_x, res_box_y, res_error, graph_buttons, clicksel_prompt, render_button, \

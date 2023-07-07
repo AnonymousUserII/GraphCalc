@@ -25,23 +25,24 @@ def format_equation(equation: str, m: float, n: float) -> tuple[str, str]:
     Turns an equation from a string and formats its constants and functions to be Python-readable
     """
     # Replace constants
-    temp: str = equation.replace('x', "(x)").replace('y', "(y)")\
-        .replace("$m", f"({m})").replace("$n", f"({n})").replace('e', f"({e})").replace("pi", f"({pi})")
+    temp: str = equation.replace('x', "(x)").replace('y', "(y)")
+    temp = temp.replace("log", "log10").replace("ln", "log") \
+                .replace("fact", "factorial").replace("factorial", "gamma_shift")\
+                .replace("csc", "1/sin").replace("cosec", "1/sin") \
+                .replace("sec", "1/cos").replace("cot", "1/tan") \
+                .replace("arcsin", "asin").replace("arccos", "acos").replace("arctan", "atan") \
+                .replace("abs", "fabs").replace('^', "**").replace(")(", ")*(") \
+                .replace("$m", f"({m})").replace("$n", f"({n})").replace('e', f"({e})").replace("pi", f"({pi})")
     
     # Multiply coefficients in terms, including functions
     # e.g. 2x = 2 * x, 10sinx = 10*sin(x)
-    for function in funcs + ('(', "sec", "csc", "cot" + "ln"):
-        for i in range(10):
+    for function in funcs + ('(', "sec", "csc", "cosec", "cot" + "ln"):
+        for i in range(10):  # All digits 0..9
             temp = temp.replace(f"{i}{function}", f"{i}*{function}")
     
     # Replace the names of some functions with the names the graph uses
     # e.g. log -> log of base 10, ln -> log of base e
-    output: tuple = tuple(temp.replace("log", "log10").replace("ln", "log")
-                              .replace("fact", "factorial").replace("factorial", "gamma_shift")
-                              .replace("sec", "1/cos").replace("csc", "1/sin").replace("cot", "1/tan")
-                              .replace("arcsin", "asin").replace("arccos", "acos").replace("arctan", "atan")
-                              .replace("abs", "fabs").replace('^', "**").replace(")(", ")*(").split('='))
-    return output
+    return tuple(temp.split('='))
 
 
 def test_for_intercept(info_pack: tuple[str, str, tuple[float, float], float, float]) -> tuple[float, float]:

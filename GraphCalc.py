@@ -1,4 +1,4 @@
-from os import path
+from os import path, mkdir
 from sys import exit
 from multiprocessing import freeze_support, Process, Manager
 from threading import Thread
@@ -35,6 +35,11 @@ if __name__ == "__main__":
     except FileNotFoundError:
         print("This must be run with the Assets folder in its directory")
         exit(404)
+
+try:  # Create the directory for graph screenshots
+    mkdir(path.join("GraphCaptures"))
+except OSError:  # Directory already exists
+    pass
 
 func_dict: dict = {}  # Create a dictionary for eval to identify functions
 for function in ["sin", "cos", "tan", "sec", "csc", "cot", "asin", "acos", "atan", "sqrt", "log", "log10", "gamma"]:

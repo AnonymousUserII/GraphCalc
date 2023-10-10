@@ -27,12 +27,12 @@ def format_equation(equation: str, m: float, n: float) -> tuple[str, str]:
     # Replace constants
     temp: str = equation.replace('x', "(x)").replace('y', "(y)")
     temp = temp.replace("log", "log10").replace("ln", "log") \
-                .replace("fact", "factorial").replace("factorial", "gamma_shift")\
-                .replace("csc", "1/sin").replace("cosec", "1/sin") \
-                .replace("sec", "1/cos").replace("cot", "1/tan") \
-                .replace("arcsin", "asin").replace("arccos", "acos").replace("arctan", "atan") \
-                .replace("abs", "fabs").replace('^', "**").replace(")(", ")*(") \
-                .replace("$m", f"({m})").replace("$n", f"({n})").replace('e', f"({e})").replace("pi", f"({pi})")
+               .replace("fact", "factorial").replace("factorial", "gamma_shift") \
+               .replace("csc", "1/sin").replace("cosec", "1/sin") \
+               .replace("sec", "1/cos").replace("cot", "1/tan") \
+               .replace("arcsin", "asin").replace("arccos", "acos").replace("arctan", "atan") \
+               .replace("abs", "fabs").replace('^', "**").replace(")(", ")*(") \
+               .replace("$m", f"({m})").replace("$n", f"({n})").replace('e', f"({e})").replace("pi", f"({pi})")
     
     # Multiply coefficients in terms, including functions
     # e.g. 2x = 2 * x, 10sinx = 10*sin(x)

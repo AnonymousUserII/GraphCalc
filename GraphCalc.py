@@ -118,8 +118,9 @@ def graph_capture(app_window: pygame.Surface) -> None:
         enabled_func_texts.append(func.text.replace(' ', "") if enabler.on else "")
     filename: str = ";".join(enabled_func_texts)
     filename += "_on_" + asctime(localtime(time()))[4:].replace(' ', '_').replace(':', '.')
-    
-    pygame.image.save(screenshot, path.join("GraphCaptures", filename + ".png"))
+    filename = filename.replace('/', "\\")
+
+    pygame.image.save(screenshot, path.join("./GraphCaptures", filename + ".png"))
     return None
 
 
@@ -755,30 +756,29 @@ def graph_config_window() -> None:
                             # Runs if the render butter was pressed
                             did_poz = False
                             valid_prompt: tuple[tuple, int] = grapher.validate_equation(func.text)
-                            if valid_prompt[0] and not invalid_funcs[idx]:
-                                if valid_prompt[0][0] == "(y)" and 'y' not in valid_prompt[0][1] \
-                                        or valid_prompt[0][0] == "(x)" and 'x' not in valid_prompt[0][1]:
-                                    render_queue.append(Thread(target=grapher.function_graph,
+                            if valid_prompt[0] and not invalid_funcs[idx] \
+                                    or valid_prompt[0][0] == "(x)" and 'x' not in valid_prompt[0][1]:
+                                render_queue.append(Thread(target=grapher.function_graph,
                                                                args=(valid_prompt[0], indicator,
                                                                      color, LINE_WIDTH)))
-                                    
-                                else:
-                                    if proc_queue[idx]:
-                                        if proc_queue[idx].is_alive():  # Then stop current graphing process
-                                            proc_queue[idx].terminate()
-                                    proc_queue[idx] = Process(target=iterative_points,
-                                                              args=(valid_prompt[0], grapher.x_bounds,
-                                                                    grapher.y_bounds, grapher.range,
-                                                                    grapher.resolution, mang_dict, idx))
-                                    indicator.hide(BG_COLOR)
-                                    indicator.draw()
-                                    proc_queue[idx].start()
-                                    # render_queue.append(Thread(target=grapher.iterative_graph,
-                                    #                            args=(valid_prompt[0], indicator,
-                                    #                                  color, LINE_WIDTH, idx)))
-                                old_funcs[idx] = func.text
+                                
                             else:
-                                print(f"func{idx} is an invalid function/relation")
+                                if proc_queue[idx]:
+                                    if proc_queue[idx].is_alive():  # Then stop current graphing process
+                                        proc_queue[idx].terminate()
+                                proc_queue[idx] = Process(target=iterative_points,
+                                                          args=(valid_prompt[0], grapher.x_bounds,
+                                                                grapher.y_bounds, grapher.range,
+                                                                grapher.resolution, mang_dict, idx))
+                                indicator.hide(BG_COLOR)
+                                indicator.draw()
+                                proc_queue[idx].start()
+                                # render_queue.append(Thread(target=grapher.iterative_graph,
+                                #                            args=(valid_prompt[0], indicator,
+                                #                                  color, LINE_WIDTH, idx)))
+                            old_funcs[idx] = func.text
+                        else:
+                            print(f"func{idx} is an invalid function/relation")
                         
                 grapher.reset(GRAPH_RES, GRAPH_POS, (float(eval(left_bound.text)), float(eval(right_bound.text))),
                               (float(eval(lower_bound.text)), float(eval(upper_bound.text))))

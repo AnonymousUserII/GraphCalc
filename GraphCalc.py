@@ -756,18 +756,19 @@ def graph_config_window() -> None:
                             # Runs if the render butter was pressed
                             did_poz = False
                             valid_prompt: tuple[tuple, int] = grapher.validate_equation(func.text)
-                            if valid_prompt[0] and not invalid_funcs[idx] \
-                                    or valid_prompt[0][0] == "(x)" and 'x' not in valid_prompt[0][1]:
+                            if valid_prompt[0] and not invalid_funcs[idx] and\
+                                    (valid_prompt[0][0] == "(y)" and 'y' not in valid_prompt[0][1]\
+                                     or valid_prompt[0][0] == "(x)" and 'x' not in valid_prompt[0][1]):
                                 render_queue.append(Thread(target=grapher.function_graph,
                                                                args=(valid_prompt[0], indicator,
                                                                      color, LINE_WIDTH)))
-                                
+                              
                             else:
                                 if proc_queue[idx]:
                                     if proc_queue[idx].is_alive():  # Then stop current graphing process
                                         proc_queue[idx].terminate()
                                 proc_queue[idx] = Process(target=iterative_points,
-                                                          args=(valid_prompt[0], grapher.x_bounds,
+                                                            args=(valid_prompt[0], grapher.x_bounds,
                                                                 grapher.y_bounds, grapher.range,
                                                                 grapher.resolution, mang_dict, idx))
                                 indicator.hide(BG_COLOR)

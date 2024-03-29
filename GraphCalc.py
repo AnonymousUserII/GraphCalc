@@ -756,8 +756,9 @@ def graph_config_window() -> None:
                             # Runs if the render butter was pressed
                             did_poz = False
                             valid_prompt: tuple[tuple, int] = grapher.validate_equation(func.text)
-                            if valid_prompt[0] and not invalid_funcs[idx] \
-                                    or valid_prompt[0][0] == "(x)" and 'x' not in valid_prompt[0][1]:
+                            if (valid_prompt[0] and not invalid_funcs[idx]) and \
+                                    (valid_prompt[0][0] == "(y)" and 'y' not in valid_prompt[0][1]\
+                                     or (valid_prompt[0][0] == "(x)" and 'x' not in valid_prompt[0][1])):
                                 render_queue.append(Thread(target=grapher.function_graph,
                                                                args=(valid_prompt[0], indicator,
                                                                      color, LINE_WIDTH)))
